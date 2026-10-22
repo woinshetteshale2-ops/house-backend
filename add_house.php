@@ -23,7 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = $_POST['price'];
     $bedrooms = intval($_POST['bedrooms']);
     $status = "pending"; // አዲስ ሲገባ በአድሚን እስኪጸድቅ pending ይሆናል
-
+$woreda = isset($_POST['woreda']) ? $conn->real_escape_string($_POST['woreda']) : '';
+$kebele = isset($_POST['kebele']) ? $conn->real_escape_string($_POST['kebele']) : '';
+$phone = isset($_POST['phone']) ? $conn->real_escape_string($_POST['phone']) : '';
+$description = isset($_POST['description']) ? $conn->real_escape_string($_POST['description']) : '';
     $uploadedImages = [];
     if (isset($_FILES['images'])) {
         $targetDir = "uploads/";
@@ -37,15 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $targetFilePath = $targetDir . time() . "_" . $fileName;
                 if (move_uploaded_file($tmp_name, $targetFilePath)) {
                     $uploadedImages[] = basename($targetFilePath);
-                }
-            }
-        }
-    }
+                }   }  }  }
 
     $imageStr = implode(',', $uploadedImages);
 
-    $sql = "INSERT INTO houses (title, location, price, bedrooms, images, status) VALUES ('$title', '$location', '$price', '$bedrooms', '$imageStr', '$status')";
-
+ $sql = "INSERT INTO houses (title, location, price, bedrooms, status, woreda, kebele, phone, description, images) 
+        VALUES ('$title', '$location', '$price', '$bedrooms', '$status', '$woreda', '$kebele', '$phone', '$description', '$imageStr')";
     if ($conn->query($sql) === TRUE) {
         echo json_encode(["status" => "success", "message" => "Property published successfully and waiting for admin approval!"]);
     } else {
